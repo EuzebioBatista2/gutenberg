@@ -18,13 +18,24 @@ export const Appender = forwardRef(
 		const instanceId = useInstanceId( Appender );
 		const { directInsert, hideInserter } = useSelect(
 			( select ) => {
-				const { getBlockListSettings, getTemplateLock, isZoomOut } =
-					unlock( select( blockEditorStore ) );
+				const {
+					getBlockListSettings,
+					getBlockName,
+					getTemplateLock,
+					isZoomOut,
+				} = unlock( select( blockEditorStore ) );
 
 				const settings = getBlockListSettings( clientId );
 				const directInsertValue = settings?.directInsert || false;
+				const templateLock = getTemplateLock( clientId );
+				// A navigation's List View is how its menu is edited, and items
+				// can still be added to it in a contentOnly locked section.
+				const isEditableNavigation =
+					templateLock === 'contentOnly' &&
+					getBlockName( clientId ) === 'core/navigation';
 				const hideInserterValue =
-					!! getTemplateLock( clientId ) || isZoomOut();
+					( !! templateLock && ! isEditableNavigation ) ||
+					isZoomOut();
 
 				return {
 					directInsert: directInsertValue,
