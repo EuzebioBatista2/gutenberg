@@ -196,7 +196,7 @@ function block_core_post_navigation_link_get_support_styles( $attributes ) {
 		);
 	}
 
-	$styles = wp_style_engine_get_styles(
+	$styles         = wp_style_engine_get_styles(
 		array(
 			'border'     => $border_styles,
 			'dimensions' => array(
@@ -204,16 +204,13 @@ function block_core_post_navigation_link_get_support_styles( $attributes ) {
 				'minWidth'  => $block_styles['dimensions']['minWidth'] ?? null,
 			),
 			'shadow'     => $block_styles['shadow'] ?? null,
-			'spacing'    => array(
-				'margin'  => $block_styles['spacing']['margin'] ?? null,
-				'padding' => $block_styles['spacing']['padding'] ?? null,
-			),
 		)
 	);
+	$spacing_styles = wp_get_spacing_classes_and_styles( $attributes );
 
 	return array(
-		'class' => $styles['classnames'] ?? '',
-		'style' => $styles['css'] ?? '',
+		'class' => trim( ( $styles['classnames'] ?? '' ) . ' ' . ( $spacing_styles['class'] ?? '' ) ),
+		'style' => ( $styles['css'] ?? '' ) . ( $spacing_styles['style'] ?? '' ),
 	);
 }
 
