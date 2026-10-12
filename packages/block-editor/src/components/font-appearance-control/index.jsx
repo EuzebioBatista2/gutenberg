@@ -1,6 +1,6 @@
-import { CustomSelectControl } from '@wordpress/components';
+import { SelectControl } from '@wordpress/ui';
 import { useMemo } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { getFontStylesAndWeights } from '../../utils/get-font-styles-and-weights';
 
 /**
@@ -108,55 +108,41 @@ export default function FontAppearanceControl( props ) {
 
 	// Find current selection by comparing font style & weight against options,
 	// and fall back to the Default option if there is no matching option.
+	const items = selectOptions.map( ( option ) => ( {
+		value: option.key,
+		label: option.name,
+		style: option.style,
+	} ) );
 	const currentSelection =
-		selectOptions.find(
+		items.find(
 			( option ) =>
 				option.style.fontStyle === fontStyle &&
 				option.style.fontWeight === fontWeight
-		) || selectOptions[ 0 ];
-
-	// Adjusts screen reader description based on styles or weights.
-	const getDescribedBy = () => {
-		if ( ! currentSelection ) {
-			return __( 'No selected font appearance' );
-		}
-
-		if ( ! hasFontStyles ) {
-			return sprintf(
-				// translators: %s: Currently selected font weight.
-				__( 'Currently selected font weight: %s' ),
-				currentSelection.name
-			);
-		}
-
-		if ( ! hasFontWeights ) {
-			return sprintf(
-				// translators: %s: Currently selected font style.
-				__( 'Currently selected font style: %s' ),
-				currentSelection.name
-			);
-		}
-
-		return sprintf(
-			// translators: %s: Currently selected font appearance.
-			__( 'Currently selected font appearance: %s' ),
-			currentSelection.name
-		);
-	};
+		) || items[ 0 ];
 
 	return (
 		hasStylesOrWeights && (
-			<CustomSelectControl
+			<SelectControl
 				{ ...otherProps }
 				className="components-font-appearance-control"
 				label={ label }
-				describedBy={ getDescribedBy() }
-				options={ selectOptions }
+				items={ items }
 				value={ currentSelection }
-				onChange={ ( { selectedItem } ) =>
-					onChange( selectedItem.style )
+				onValueChange={ ( selectedItem ) =>
+					onChange( selectedItem?.style ?? items[ 0 ].style )
 				}
-			/>
+			>
+				{ items.map( ( item ) => (
+					<SelectControl.Item key={ item.value } value={ item }>
+						<SelectControl.ItemLabel
+							className="components-font-appearance-control__option"
+							style={ item.style }
+						>
+							{ item.label }
+						</SelectControl.ItemLabel>
+					</SelectControl.Item>
+				) ) }
+			</SelectControl>
 		)
 	);
 }
