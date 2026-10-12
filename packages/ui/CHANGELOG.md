@@ -8,7 +8,7 @@
 
 ### Enhancements
 
--   `Menu`, `Select`, `Combobox`, `Autocomplete`, and searchable select controls: Use neutral highlights and a zero-offset ring for keyboard-focused items. Keep open submenu parents highlighted with the same neutral colors ([#84087](https://github.com/WordPress/gutenberg/pull/84087)).
+-   `Menu`, `Select`, `Combobox`, `Autocomplete`, and searchable select controls: Use neutral highlights and a zero-offset ring for keyboard-focused items. Keep open submenu parents highlighted with the same neutral colors. The matching `@wordpress/components` changes are tracked in [#84583](https://github.com/WordPress/gutenberg/pull/84583) ([#84087](https://github.com/WordPress/gutenberg/pull/84087)).
 
 ### Bug Fixes
 
