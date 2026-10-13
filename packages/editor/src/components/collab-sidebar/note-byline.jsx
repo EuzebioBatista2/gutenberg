@@ -1,5 +1,6 @@
 // eslint-disable-next-line @wordpress/use-recommended-components -- Pending Design System review, see #76135.
-import { Avatar, Stack, Tooltip } from '@wordpress/ui';
+import { Avatar, Icon, Stack, Tooltip } from '@wordpress/ui';
+import { commentAuthorAvatar } from '@wordpress/icons';
 import { _x } from '@wordpress/i18n';
 import {
 	dateI18n,
@@ -9,7 +10,6 @@ import {
 } from '@wordpress/date';
 import { store as coreStore } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
-import { store as blockEditorStore } from '@wordpress/block-editor';
 import { getAvatarBorderColor } from './utils';
 
 export function NoteByline( { avatar, name, date, userId } ) {
@@ -37,13 +37,9 @@ export function NoteByline( { avatar, name, date, userId } ) {
 				};
 			}
 
-			const { getSettings } = select( blockEditorStore );
-			const { __experimentalDiscussionSettings } = getSettings();
-			const defaultAvatar = __experimentalDiscussionSettings?.avatarURL;
 			const userData = getCurrentUser();
 			return {
-				currentUserAvatar:
-					userData?.avatar_urls?.[ 48 ] ?? defaultAvatar,
+				currentUserAvatar: userData?.avatar_urls?.[ 48 ],
 				currentUserName: userData?.name,
 				currentUserId: userData?.id,
 				dateFormat: siteSettings?.date_format,
@@ -78,6 +74,9 @@ export function NoteByline( { avatar, name, date, userId } ) {
 					),
 				} }
 			>
+				<Avatar.Fallback>
+					<Icon icon={ commentAuthorAvatar } />
+				</Avatar.Fallback>
 				<Avatar.Image src={ avatar || currentUserAvatar } alt="" />
 			</Avatar.Root>
 			<Stack
