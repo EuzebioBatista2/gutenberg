@@ -1,6 +1,7 @@
+import { CustomSelectControl } from '@wordpress/components';
 import { SelectControl } from '@wordpress/ui';
 import { useMemo } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { getFontStylesAndWeights } from '../../utils/get-font-styles-and-weights';
 
 /**
@@ -119,6 +120,46 @@ export default function FontAppearanceControl( props ) {
 				option.style.fontStyle === fontStyle &&
 				option.style.fontWeight === fontWeight
 		) || items[ 0 ];
+
+	// Preserve the public legacy prop contract for callers that customize the control.
+	if ( Object.keys( otherProps ).length ) {
+		const getDescribedBy = () => {
+			if ( ! hasFontStyles ) {
+				return sprintf(
+					// translators: %s: Currently selected font weight.
+					__( 'Currently selected font weight: %s' ),
+					currentSelection.label
+				);
+			}
+			if ( ! hasFontWeights ) {
+				return sprintf(
+					// translators: %s: Currently selected font style.
+					__( 'Currently selected font style: %s' ),
+					currentSelection.label
+				);
+			}
+			return sprintf(
+				// translators: %s: Currently selected font appearance.
+				__( 'Currently selected font appearance: %s' ),
+				currentSelection.label
+			);
+		};
+		return (
+			hasStylesOrWeights && (
+				<CustomSelectControl
+					{ ...otherProps }
+					className="components-font-appearance-control"
+					label={ label }
+					describedBy={ getDescribedBy() }
+					options={ selectOptions }
+					value={ selectOptions[ items.indexOf( currentSelection ) ] }
+					onChange={ ( { selectedItem } ) =>
+						onChange( selectedItem.style )
+					}
+				/>
+			)
+		);
+	}
 
 	return (
 		hasStylesOrWeights && (
