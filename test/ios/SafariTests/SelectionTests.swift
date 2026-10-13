@@ -43,25 +43,20 @@ final class SelectionTests: XCTestCase {
 		let second = editor.block( title: "Paragraph", content: "Delta echo foxtrot" )
 		XCTAssertTrue( second.waitForExistence( timeout: 240 ), "The post did not load" )
 
+		// Select the second paragraph.
+		second.tap()
+		let focused = web.textViews.matching( NSPredicate( format: "hasKeyboardFocus == true" ) ).firstMatch
+		XCTAssertTrue( focused.waitForExistence( timeout: 10 ), "The tap did not focus the paragraph" )
+
 		// The emphasis makes "bravo" a text element of its own, with its
 		// own frame.
 		let bravo = web.staticTexts[ "bravo" ].frame
 		let target = second.frame
 
-		// Select the first word, "Delta", from the edit menu: the first tap
-		// puts the caret at the start of the word, a tap on the caret opens
-		// the menu. A double tap only selects when Safari handles both
-		// touches in time, which a busy runner sometimes misses.
-		let delta = point( target.minX + 15, target.midY )
-		delta.tap()
-		let focused = web.textViews.matching( NSPredicate( format: "hasKeyboardFocus == true" ) ).firstMatch
-		XCTAssertTrue( focused.waitForExistence( timeout: 10 ), "The tap did not focus the paragraph" )
-		delta.tap()
-		let select = safari.menuItems[ "Select" ]
-		XCTAssertTrue( select.waitForExistence( timeout: 5 ), "The tap on the caret did not open the edit menu" )
-		select.tap()
+		// Double tap the first word, "Delta".
+		point( target.minX + 15, target.midY ).doubleTap()
 		let cut = safari.menuItems[ "Cut" ]
-		XCTAssertTrue( cut.waitForExistence( timeout: 5 ), "Select did not select a word" )
+		XCTAssertTrue( cut.waitForExistence( timeout: 5 ), "The double tap did not select a word" )
 
 		// The start handle's knob sits above the line, at the start of the
 		// word. The selection moves by as much as the finger does, so drag
