@@ -138,9 +138,7 @@ xcrun simctl spawn "$UDID" defaults write com.apple.mobilesafari com.apple.TipKi
 # Safari's first launch on a fresh simulator takes most of a minute, and
 # the simulator then loses the test's first tap. Launch it once here.
 step "Starting Safari once"
-# openurl gives up after a few seconds while Safari is still starting;
-# the server's log shows when the page is actually requested.
-xcrun simctl openurl "$UDID" "$WP_BASE_URL/wp-login.php?warm-up" || true
+xcrun simctl openurl "$UDID" "$WP_BASE_URL/wp-login.php?warm-up"
 for _ in $( seq 1 120 ); do
 	grep -q "wp-login.php?warm-up" "$ROOT/test/ios/build/server.log" && break
 	sleep 1
