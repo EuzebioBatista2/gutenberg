@@ -10,6 +10,7 @@
 
 -   Query: List the existing terms in the taxonomy filters, so categories and tags can be browsed and selected instead of recalled and typed. The controls now use `SearchableChipSelectControl` from `@wordpress/ui` ([#82583](https://github.com/WordPress/gutenberg/pull/82583)).
 -   Icon: Speed up loading icons in the icon library ([#84327](https://github.com/WordPress/gutenberg/pull/84327)).
+-   Post Navigation Link: Add background image, size, and gradient support, withheld from the empty wrapper the same way as border, shadow and spacing ([#83940](https://github.com/WordPress/gutenberg/pull/83940)).
 
 ### Bug Fixes
 
@@ -22,7 +23,6 @@
 -   Icon: Group the "All" tab of the icon library by collection, under a heading that stays at the top while scrolling, when more than one collection is registered.
 -   Navigation Link: Search every entity type from the link UI instead of only the link's own type; so a category, tag or post can be added without needing to add that specific type's navigation link block ([#83408](https://github.com/WordPress/gutenberg/pull/83408)).
 -   Navigation Link: List the blocks a Navigation allows in the link UI search results, so typing "Home" finds the Home Link block ([#83652](https://github.com/WordPress/gutenberg/pull/83652)).
--   Post Navigation Link: Add background image, size, and gradient support, withheld from the empty wrapper the same way as border, shadow and spacing.
 -   Cover: Don't autoplay an embedded background video on the front end when the visitor prefers reduced motion. A new view module swaps the iframe source for one without the autoplay parameters ([#83452](https://github.com/WordPress/gutenberg/pull/83452)).
 -   Columns: Remove the column count slider from the block settings ([#83262](https://github.com/WordPress/gutenberg/pull/83262)).
 -   Avatar: Explain in the block settings that avatars use the Gravatar service, and link users who can manage settings to the Discussion settings where the default avatar is chosen ([#83567](https://github.com/WordPress/gutenberg/pull/83567)).
