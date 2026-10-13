@@ -121,7 +121,8 @@ export default function FontAppearanceControl( props ) {
 				option.style.fontWeight === fontWeight
 		) || items[ 0 ];
 
-	// Preserve the public legacy prop contract for callers that customize the control.
+	// Callers can forward legacy props such as size and trigger focus callbacks.
+	// SelectControl does not accept those props with the same behavior.
 	if ( Object.keys( otherProps ).length ) {
 		const getDescribedBy = () => {
 			if ( ! hasFontStyles ) {
