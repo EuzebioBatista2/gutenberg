@@ -1,10 +1,7 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo, useEffect } from '@wordpress/element';
-import { store as coreStore } from '@wordpress/core-data';
 import { store as editorStore } from '../../store';
 import { unlock } from '../../lock-unlock';
-import { useSetAsHomepageAction } from './set-as-homepage';
-import { useSetAsPostsPageAction } from './set-as-posts-page';
 
 export function usePostActions( { postType, onActionPerformed, context } ) {
 	const { defaultActions } = useSelect(
@@ -17,56 +14,6 @@ export function usePostActions( { postType, onActionPerformed, context } ) {
 		[ postType ]
 	);
 
-	const shouldShowHomepageActions = useSelect(
-		( select ) => {
-			if ( postType !== 'page' ) {
-				return false;
-			}
-
-			const { getDefaultTemplateId, getEntityRecord, canUser } =
-				select( coreStore );
-			const canUpdateSettings = canUser( 'update', {
-				kind: 'root',
-				name: 'site',
-			} );
-
-			if ( ! canUpdateSettings ) {
-				return false;
-			}
-
-			// Note that resolved template for `front-page` is not necessarily a
-			// `front-page` template.
-			const frontPageTemplateId = getDefaultTemplateId( {
-				slug: 'front-page',
-			} );
-
-			if ( ! frontPageTemplateId ) {
-				return true;
-			}
-
-			// This won't trigger a second network request, getDefaultTemplateId
-			// will have received the whole template from the REST API.
-			const frontPageTemplate = getEntityRecord(
-				'postType',
-				'wp_template',
-				frontPageTemplateId
-			);
-
-			if ( ! frontPageTemplate ) {
-				return true;
-			}
-
-			// When there is a front page template, the front page cannot be
-			// changed. See
-			// https://developer.wordpress.org/themes/basics/template-hierarchy/
-			return frontPageTemplate.slug !== 'front-page';
-		},
-		[ postType ]
-	);
-
-	const setAsHomepageAction = useSetAsHomepageAction();
-	const setAsPostsPageAction = useSetAsPostsPageAction();
-
 	const { registerPostTypeSchema } = unlock( useDispatch( editorStore ) );
 	useEffect( () => {
 		registerPostTypeSchema( postType );
@@ -74,9 +21,6 @@ export function usePostActions( { postType, onActionPerformed, context } ) {
 
 	return useMemo( () => {
 		let actions = [ ...defaultActions ];
-		if ( shouldShowHomepageActions ) {
-			actions.push( setAsHomepageAction, setAsPostsPageAction );
-		}
 
 		// Ensure "Move to trash" is always the last action.
 		actions = actions.sort( ( a, b ) =>
@@ -144,12 +88,5 @@ export function usePostActions( { postType, onActionPerformed, context } ) {
 		}
 
 		return actions;
-	}, [
-		context,
-		defaultActions,
-		onActionPerformed,
-		setAsHomepageAction,
-		setAsPostsPageAction,
-		shouldShowHomepageActions,
-	] );
+	}, [ context, defaultActions, onActionPerformed ] );
 }

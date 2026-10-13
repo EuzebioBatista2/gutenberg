@@ -63,6 +63,8 @@ import {
 import { store as editorStore } from '../../store';
 import { ATTACHMENT_POST_TYPE, DESIGN_POST_TYPES } from '../../store/constants';
 import postPreviewField from '../fields/content-preview';
+import { setAsHomepage } from '../../components/post-actions/set-as-homepage';
+import { setAsPostsPage } from '../../components/post-actions/set-as-posts-page';
 import { unlock } from '../../lock-unlock';
 
 /**
@@ -193,6 +195,13 @@ export const registerPostTypeSchema =
 		const currentTheme = await registry
 			.resolveSelect( coreStore )
 			.getCurrentTheme();
+		// The homepage and the posts page are site settings, so only the users
+		// who can update the settings can change them.
+		const canUpdateSiteSettings =
+			postType === 'page' &&
+			( await registry
+				.resolveSelect( coreStore )
+				.canUser( 'update', { kind: 'root', name: 'site' } ) );
 		const { disablePostFormats } = registry
 			.select( editorStore )
 			.getEditorSettings();
@@ -234,6 +243,8 @@ export const registerPostTypeSchema =
 			deletePost,
 			trashPost,
 			permanentlyDeletePost,
+			canUpdateSiteSettings ? setAsHomepage : undefined,
+			canUpdateSiteSettings ? setAsPostsPage : undefined,
 		].filter( Boolean );
 
 		// Handle attachment post type separately with media-specific fields
