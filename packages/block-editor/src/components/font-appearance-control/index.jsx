@@ -1,6 +1,4 @@
-import { CustomSelectControl } from '@wordpress/components';
-import { SelectControl } from '@wordpress/ui';
-import { useMemo } from '@wordpress/element';
+import { Field, Select, VisuallyHidden } from '@wordpress/ui';
 import { __, sprintf } from '@wordpress/i18n';
 import { getFontStylesAndWeights } from '../../utils/get-font-styles-and-weights';
 
@@ -44,6 +42,17 @@ export default function FontAppearanceControl( props ) {
 		hasFontWeights = true,
 		fontFamilyFaces,
 		value: { fontStyle, fontWeight },
+		hideLabelFromVision,
+		size,
+		disabled,
+		className: _className,
+		label: _label,
+		describedBy: _describedBy,
+		options: _options,
+		showSelectedHint: _showSelectedHint,
+		__experimentalShowSelectedHint: _experimentalShowSelectedHint,
+		__nextUnconstrainedWidth: _nextUnconstrainedWidth,
+		__nextHasNoMarginBottom: _nextHasNoMarginBottom,
 		...otherProps
 	} = props;
 	const hasStylesOrWeights = hasFontStyles || hasFontWeights;
@@ -92,20 +101,14 @@ export default function FontAppearanceControl( props ) {
 	};
 
 	// Map font styles and weights to select options.
-	const selectOptions = useMemo( () => {
-		// Display combined available font style and weight options.
-		if ( hasFontStyles && hasFontWeights ) {
-			return combineOptions();
-		}
-
-		// Display only font style options or font weight options.
-		return hasFontStyles ? styleOptions() : weightOptions();
-	}, [
-		props.options,
-		fontStyles,
-		fontWeights,
-		combinedStyleAndWeightOptions,
-	] );
+	let selectOptions;
+	if ( hasFontStyles && hasFontWeights ) {
+		selectOptions = combineOptions();
+	} else if ( hasFontStyles ) {
+		selectOptions = styleOptions();
+	} else {
+		selectOptions = weightOptions();
+	}
 
 	// Find current selection by comparing font style & weight against options,
 	// and fall back to the Default option if there is no matching option.
@@ -121,69 +124,66 @@ export default function FontAppearanceControl( props ) {
 				option.style.fontWeight === fontWeight
 		) || items[ 0 ];
 
-	// Callers can forward legacy props such as size and trigger focus callbacks.
-	// SelectControl does not accept those props with the same behavior.
-	if ( Object.keys( otherProps ).length ) {
-		const getDescribedBy = () => {
-			if ( ! hasFontStyles ) {
-				return sprintf(
-					// translators: %s: Currently selected font weight.
-					__( 'Currently selected font weight: %s' ),
-					currentSelection.label
-				);
-			}
-			if ( ! hasFontWeights ) {
-				return sprintf(
-					// translators: %s: Currently selected font style.
-					__( 'Currently selected font style: %s' ),
-					currentSelection.label
-				);
-			}
+	const getDescribedBy = () => {
+		if ( ! hasFontStyles ) {
 			return sprintf(
-				// translators: %s: Currently selected font appearance.
-				__( 'Currently selected font appearance: %s' ),
+				// translators: %s: Currently selected font weight.
+				__( 'Currently selected font weight: %s' ),
 				currentSelection.label
 			);
-		};
-		return (
-			hasStylesOrWeights && (
-				<CustomSelectControl
-					{ ...otherProps }
-					className="components-font-appearance-control"
-					label={ label }
-					describedBy={ getDescribedBy() }
-					options={ selectOptions }
-					value={ selectOptions[ items.indexOf( currentSelection ) ] }
-					onChange={ ( { selectedItem } ) =>
-						onChange( selectedItem.style )
-					}
-				/>
-			)
+		}
+		if ( ! hasFontWeights ) {
+			return sprintf(
+				// translators: %s: Currently selected font style.
+				__( 'Currently selected font style: %s' ),
+				currentSelection.label
+			);
+		}
+		return sprintf(
+			// translators: %s: Currently selected font appearance.
+			__( 'Currently selected font appearance: %s' ),
+			currentSelection.label
 		);
-	}
+	};
 
 	return (
 		hasStylesOrWeights && (
-			<SelectControl
-				{ ...otherProps }
+			<Field.Root
 				className="components-font-appearance-control"
-				label={ label }
-				value={ currentSelection }
-				onValueChange={ ( selectedItem ) =>
-					onChange( selectedItem?.style ?? items[ 0 ].style )
-				}
+				disabled={ disabled }
 			>
-				{ items.map( ( item ) => (
-					<SelectControl.Item key={ item.value } value={ item }>
-						<SelectControl.ItemLabel
-							className="components-font-appearance-control__option"
-							style={ item.style }
-						>
-							{ item.label }
-						</SelectControl.ItemLabel>
-					</SelectControl.Item>
-				) ) }
-			</SelectControl>
+				<Field.Label
+					className="components-base-control__label"
+					hideFromVision={ hideLabelFromVision }
+				>
+					{ label }
+				</Field.Label>
+				<Select.Root
+					value={ currentSelection }
+					onValueChange={ ( selectedItem ) =>
+						onChange( selectedItem?.style ?? items[ 0 ].style )
+					}
+					items={ items }
+					disabled={ disabled }
+				>
+					<Select.Trigger size={ size } { ...otherProps } />
+					<Select.Popup width="content">
+						{ items.map( ( item ) => (
+							<Select.Item key={ item.value } value={ item }>
+								<Select.ItemLabel
+									className="components-font-appearance-control__option"
+									style={ item.style }
+								>
+									{ item.label }
+								</Select.ItemLabel>
+							</Select.Item>
+						) ) }
+					</Select.Popup>
+				</Select.Root>
+				<VisuallyHidden render={ <Field.Description /> }>
+					{ getDescribedBy() }
+				</VisuallyHidden>
+			</Field.Root>
 		)
 	);
 }
