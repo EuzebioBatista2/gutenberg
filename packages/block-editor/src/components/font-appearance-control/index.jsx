@@ -167,7 +167,6 @@ export default function FontAppearanceControl( props ) {
 				{ ...otherProps }
 				className="components-font-appearance-control"
 				label={ label }
-				items={ items }
 				value={ currentSelection }
 				onValueChange={ ( selectedItem ) =>
 					onChange( selectedItem?.style ?? items[ 0 ].style )
