@@ -1,5 +1,5 @@
-import { Field, Select, VisuallyHidden } from '@wordpress/ui';
-import { __, sprintf } from '@wordpress/i18n';
+import { Field, Select } from '@wordpress/ui';
+import { __ } from '@wordpress/i18n';
 import { getFontStylesAndWeights } from '../../utils/get-font-styles-and-weights';
 
 /**
@@ -124,28 +124,6 @@ export default function FontAppearanceControl( props ) {
 				option.style.fontWeight === fontWeight
 		) || items[ 0 ];
 
-	const getDescribedBy = () => {
-		if ( ! hasFontStyles ) {
-			return sprintf(
-				// translators: %s: Currently selected font weight.
-				__( 'Currently selected font weight: %s' ),
-				currentSelection.label
-			);
-		}
-		if ( ! hasFontWeights ) {
-			return sprintf(
-				// translators: %s: Currently selected font style.
-				__( 'Currently selected font style: %s' ),
-				currentSelection.label
-			);
-		}
-		return sprintf(
-			// translators: %s: Currently selected font appearance.
-			__( 'Currently selected font appearance: %s' ),
-			currentSelection.label
-		);
-	};
-
 	return (
 		hasStylesOrWeights && (
 			<Field.Root
@@ -153,7 +131,7 @@ export default function FontAppearanceControl( props ) {
 				disabled={ disabled }
 			>
 				<Field.Label
-					className="components-base-control__label"
+					className="block-editor-font-appearance-control__label"
 					hideFromVision={ hideLabelFromVision }
 				>
 					{ label }
@@ -180,9 +158,6 @@ export default function FontAppearanceControl( props ) {
 						) ) }
 					</Select.Popup>
 				</Select.Root>
-				<VisuallyHidden render={ <Field.Description /> }>
-					{ getDescribedBy() }
-				</VisuallyHidden>
 			</Field.Root>
 		)
 	);
