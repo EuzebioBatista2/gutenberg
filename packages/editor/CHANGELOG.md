@@ -21,6 +21,7 @@
 ### Internal
 
 -   Move footer-specific block breadcrumb layout styles into the package ([#84295](https://github.com/WordPress/gutenberg/pull/84295)).
+-   Add the private `useFields` hook and `loadFields` function, which read the fields of an entity from the server, through the `/wp/v2/entity-fields` route, and import the script modules that provide their JavaScript parts. The fields registered on the client with `registerEntityField` follow the server ones, unless the server returns a field with the same id ([#XXXXX](https://github.com/WordPress/gutenberg/pull/XXXXX)).
 
 ## 15.2.0 (2026-10-07)
 
