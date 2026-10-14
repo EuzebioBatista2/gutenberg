@@ -22,6 +22,7 @@ import {
 	Button,
 	privateApis as componentsPrivateApis,
 } from '@wordpress/components';
+import { Notice } from '@wordpress/ui';
 import { useSelect } from '@wordpress/data';
 import { useMemo, useCallback } from '@wordpress/element';
 import { privateApis as editorPrivateApis } from '@wordpress/editor';
@@ -38,7 +39,7 @@ import {
 import { QuickEditModal } from './quick-edit-modal';
 // Unlock WordPress private APIs
 const { useEntityRecordsWithPermissions } = unlock( coreDataPrivateApis );
-const { usePostActions, usePostFields } = unlock( editorPrivateApis );
+const { usePostActions, useFields } = unlock( editorPrivateApis );
 const { Tabs } = unlock( componentsPrivateApis );
 /**
  * Style dependencies
@@ -178,9 +179,13 @@ function PostListView( {
 		hasResolved,
 	} = useEntityRecordsWithPermissions( 'postType', postType, postTypeQuery );
 
-	const allFields = usePostFields( {
-		postType,
-	} );
+	// `usePostActions` below registers the post type's schema, which is what
+	// brings in the actions; the fields come straight from the server.
+	const {
+		fields: allFields,
+		isLoading: isLoadingFields,
+		error: fieldsError,
+	} = useFields( { kind: 'postType', name: postType } );
 
 	// Hide status column except in 'All' tab, and disable status filtering
 	const fields = useMemo( () => {
@@ -365,13 +370,20 @@ function PostListView( {
 					</Tabs>
 				</div>
 			) }
+			{ fieldsError && (
+				<Notice.Root intent="error">
+					<Notice.Description>
+						{ fieldsError.message }
+					</Notice.Description>
+				</Notice.Root>
+			) }
 			<DataViews
 				data={ posts }
 				fields={ fields }
 				view={ view }
 				onChangeView={ onChangeView }
 				actions={ actions }
-				isLoading={ isResolving || ! hasResolved }
+				isLoading={ isResolving || ! hasResolved || isLoadingFields }
 				paginationInfo={ {
 					totalItems,
 					totalPages,

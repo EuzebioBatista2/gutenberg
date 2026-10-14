@@ -1,7 +1,11 @@
 import { resolveSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
+import { privateApis as editorPrivateApis } from '@wordpress/editor';
 import { notFound } from '@wordpress/route';
+import { unlock } from '@wordpress/routes-lock-unlock';
 import { ensureView, viewToQuery } from './view-utils';
+
+const { loadFields } = unlock( editorPrivateApis );
 
 /**
  * Route configuration for post list.
@@ -19,6 +23,15 @@ export const route = {
 		} catch {
 			throw notFound();
 		}
+	},
+	loader: async ( { params }: { params: { type: string } } ) => {
+		// Warm up the fields the stage renders. `useFields` there shares this
+		// resolution, so the screen paints with its fields on first render. A
+		// failure is the stage's to report, so it does not block the route.
+		await loadFields( {
+			kind: 'postType',
+			name: params.type,
+		} ).catch( () => {} );
 	},
 	title: async ( { params }: { params: { type: string } } ) => {
 		const postType = await resolveSelect( coreStore ).getPostType(

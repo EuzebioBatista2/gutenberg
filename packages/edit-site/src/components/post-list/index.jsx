@@ -1,5 +1,6 @@
 import { Page } from '@wordpress/admin-ui';
 import { Button } from '@wordpress/components';
+import { Notice } from '@wordpress/ui';
 import {
 	store as coreStore,
 	privateApis as coreDataPrivateApis,
@@ -28,7 +29,7 @@ import {
 import useNotesCount from './use-notes-count';
 import { QuickEditModal } from './quick-edit-modal';
 
-const { usePostActions, usePostFields } = unlock( editorPrivateApis );
+const { usePostActions, useFields } = unlock( editorPrivateApis );
 const { useLocation, useHistory } = unlock( routerPrivateApis );
 const { useEntityRecordsWithPermissions } = unlock( coreDataPrivateApis );
 const EMPTY_ARRAY = [];
@@ -107,9 +108,13 @@ export default function PostList( { postType } ) {
 		setSelection( newSelection );
 	}, [ postId ] );
 
-	const fields = usePostFields( {
-		postType,
-	} );
+	// `usePostActions` below registers the post type's schema, which is what
+	// brings in the actions; the fields come straight from the server.
+	const {
+		fields,
+		isLoading: isLoadingFields,
+		error: fieldsError,
+	} = useFields( { kind: 'postType', name: postType } );
 
 	const queryArgs = useMemo( () => {
 		const filters = {};
@@ -282,6 +287,13 @@ export default function PostList( { postType } ) {
 				</>
 			}
 		>
+			{ fieldsError && (
+				<Notice.Root intent="error">
+					<Notice.Description>
+						{ fieldsError.message }
+					</Notice.Description>
+				</Notice.Root>
+			) }
 			<DataViews
 				key={ activeView }
 				paginationInfo={ paginationInfo }
@@ -289,7 +301,10 @@ export default function PostList( { postType } ) {
 				actions={ actions }
 				data={ data || EMPTY_ARRAY }
 				isLoading={
-					isLoadingData || isLoadingNotesCount || ! hasResolved
+					isLoadingData ||
+					isLoadingNotesCount ||
+					isLoadingFields ||
+					! hasResolved
 				}
 				view={ view }
 				onChangeView={ onChangeView }
