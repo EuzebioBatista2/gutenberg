@@ -4891,11 +4891,6 @@
 			"count": 3
 		}
 	},
-	"packages/core-actions/src/wp_template_part/duplicate-template-part/create-template-part-modal-contents.tsx": {
-		"@wordpress/use-recommended-components": {
-			"count": 4
-		}
-	},
 	"packages/core-commands/src/index.jsx": {
 		"react/jsx-filename-extension": {
 			"count": 1
@@ -7196,11 +7191,6 @@
 			"count": 1
 		}
 	},
-	"packages/fields/src/components/create-template-part-modal/index.tsx": {
-		"@wordpress/use-recommended-components": {
-			"count": 4
-		}
-	},
 	"packages/fields/src/components/media-edit/index.tsx": {
 		"@wordpress/use-recommended-components": {
 			"count": 4
@@ -7714,6 +7704,11 @@
 		},
 		"react/jsx-filename-extension": {
 			"count": 1
+		}
+	},
+	"packages/patterns/src/components/create-template-part-modal/index.tsx": {
+		"@wordpress/use-recommended-components": {
+			"count": 4
 		}
 	},
 	"packages/patterns/src/components/duplicate-pattern-modal.jsx": {
