@@ -4,7 +4,7 @@
 
 ### Breaking Changes
 
--   `FontFamilyControl`: Replace legacy select and label CSS hooks with `@wordpress/ui`. The `.block-editor-font-family-control` root class remains, and the label now uses `.block-editor-font-family-control__label`. Overrides targeting `.components-custom-select-control`, its item and hint classes, the `has-hint` modifier, or `.components-base-control__label` must use control-specific hooks or Design System theme tokens. Popup items render outside the root, so root-descendant selectors no longer reach them. Custom `options[].style` now applies to the option label rather than the whole item ([#84584](https://github.com/WordPress/gutenberg/pull/84584)).
+-   `FontFamilyControl`: Replace legacy select and label CSS hooks with `@wordpress/ui`. The `.block-editor-font-family-control` root class remains, and the label now uses `.block-editor-font-family-control__label`. Overrides targeting `.components-custom-select-control`, its item and hint classes, the `has-hint` modifier, or `.components-base-control__label` must use control-specific hooks or Design System theme tokens. Popup items render outside the root, so root-descendant selectors no longer reach them. Custom `options[].style` now applies to the option label rather than the whole item ([#84715](https://github.com/WordPress/gutenberg/pull/84715)).
 -   `ImageSizeControl`: The event in the `onChangeImage` callback's `{ event }` argument now comes from popup selection rather than a native select change. Read the selected value from the `slug` argument rather than `event.target.value` ([#84546](https://github.com/WordPress/gutenberg/pull/84546)).
 
 -   Raise the minimum required Node.js version to `>=22.13.0`, for stable `require(esm)` support ([#84313](https://github.com/WordPress/gutenberg/pull/84313)).
@@ -16,7 +16,7 @@
 
 ### Enhancements
 
--   Migrate `FontFamilyControl` to `@wordpress/ui`, preserving string values, Default reset behavior, font previews, custom options, small sizing, and forwarded trigger callbacks. Keep selected hints visible and expose them as an accessible description ([#84584](https://github.com/WordPress/gutenberg/pull/84584)).
+-   Migrate `FontFamilyControl` to `@wordpress/ui`, preserving string values, Default reset behavior, font previews, custom options, small sizing, and forwarded trigger callbacks. Keep selected hints visible and expose them as an accessible description ([#84715](https://github.com/WordPress/gutenberg/pull/84715)).
 -   Migrate HTML element, image size, resolution, aspect ratio, and text-shadow preset controls to `@wordpress/ui` `SelectControl` ([#84546](https://github.com/WordPress/gutenberg/pull/84546)).
 -   `BlockBreadcrumb`: Use the `Breadcrumb` component from `@wordpress/ui` to collapse overflowing ancestors into a menu while preserving block selection and document-root activation, including multi-block selections. Use block titles when renamed labels are blank after stripping HTML. Accept a `className` for consumer-specific layout ([#84295](https://github.com/WordPress/gutenberg/pull/84295)).
 -   Inserter: Replace random tips with info notices using the same light-bulb icon and style keyboard hints as keys ([#84197](https://github.com/WordPress/gutenberg/pull/84197)).
