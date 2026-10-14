@@ -8,7 +8,7 @@
 
 ### Enhancements
 
--   The pages, templates, and patterns lists, the Quick Edit form, and the identity screen read their fields from the server, through the Entity fields API. The fields registered with `registerEntityField` from `@wordpress/editor` still show, after the server ones. A screen shows an error notice when its fields fail to load ([#XXXXX](https://github.com/WordPress/gutenberg/pull/XXXXX)).
+-   The pages, templates, and patterns lists, the Quick Edit form, and the identity screen read their fields from the server, through the Entity fields API. The fields registered with `registerEntityField` from `@wordpress/editor` still show, after the server ones. A screen shows an error notice when its fields fail to load ([#84700](https://github.com/WordPress/gutenberg/pull/84700)).
 
 ## 7.6.0 (2026-10-07)
 

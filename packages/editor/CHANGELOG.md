@@ -8,7 +8,7 @@
 
 ### Enhancements
 
--   The post summary of the DataForm-based inspector reads the fields of the post type from the server, through the Entity fields API, as the site editor screens now do. The fields registered with `registerEntityField` still show on these screens, after the server ones, unless the server returns a field with the same id. A default field unregistered with `unregisterEntityField` still shows on these screens: unregister it on the server, with `wp_unregister_entity_fields()`, instead ([#XXXXX](https://github.com/WordPress/gutenberg/pull/XXXXX)).
+-   The post summary of the DataForm-based inspector reads the fields of the post type from the server, through the Entity fields API, as the site editor screens now do. The fields registered with `registerEntityField` still show on these screens, after the server ones, unless the server returns a field with the same id. A default field unregistered with `unregisterEntityField` still shows on these screens: unregister it on the server, with `wp_unregister_entity_fields()`, instead ([#84700](https://github.com/WordPress/gutenberg/pull/84700)).
 -   Migrate the classic-theme template selector to `@wordpress/ui` `SelectControl` ([#84345](https://github.com/WordPress/gutenberg/pull/84345)).
 -   Show viewport dimensions and responsive editing status in the editor footer, and clarify when viewport-specific styling is available ([#84146](https://github.com/WordPress/gutenberg/pull/84146)).
 
@@ -22,7 +22,7 @@
 ### Internal
 
 -   Move footer-specific block breadcrumb layout styles into the package ([#84295](https://github.com/WordPress/gutenberg/pull/84295)).
--   Add the private `useFields` hook and `loadFields` function, which read the fields of an entity from the server, through the `/wp/v2/entity-fields` route, and import the script modules that provide their JavaScript parts. The fields registered on the client with `registerEntityField` follow the server ones, unless the server returns a field with the same id ([#XXXXX](https://github.com/WordPress/gutenberg/pull/XXXXX)).
+-   Add the private `useFields` hook and `loadFields` function, which read the fields of an entity from the server, through the `/wp/v2/entity-fields` route, and import the script modules that provide their JavaScript parts. The fields registered on the client with `registerEntityField` follow the server ones, unless the server returns a field with the same id ([#84700](https://github.com/WordPress/gutenberg/pull/84700)).
 
 ## 15.2.0 (2026-10-07)
 
