@@ -9,6 +9,7 @@
 ### Enhancements
 
 -   Remove the dot that marks blocks with user styles in the block list. The filter to show only those blocks stays ([#84657](https://github.com/WordPress/gutenberg/pull/84657)).
+-   Element typography screens: add an "Applies to" list of the block types whose own styles override the element, linking to each block's screen.
 
 ## 1.24.0 (2026-10-07)
 
