@@ -1,7 +1,10 @@
 import { resolveSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
+import { privateApis as editorPrivateApis } from '@wordpress/editor';
 import { _x } from '@wordpress/i18n';
 import { unlock } from '@wordpress/routes-lock-unlock';
+
+const { loadFields } = unlock( editorPrivateApis );
 
 /**
  * The stage only renders a form, so it requests the `form` of the entity view
@@ -36,6 +39,11 @@ export const route = {
 					fields: VIEW_CONFIG_FIELDS,
 				}
 			),
+			// Warm up the fields the stage renders. `useFields` there shares
+			// this resolution, so the screen paints with its fields on first
+			// render. A failure is the stage's to report, so it does not
+			// block the route.
+			loadFields( { kind: 'root', name: 'site' } ).catch( () => {} ),
 		] );
 	},
 };
