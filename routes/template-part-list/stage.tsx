@@ -17,6 +17,7 @@ import {
 	Button,
 	privateApis as componentsPrivateApis,
 } from '@wordpress/components';
+import { Notice } from '@wordpress/ui';
 import { useSelect } from '@wordpress/data';
 import { useMemo, useCallback, useState } from '@wordpress/element';
 import { privateApis as editorPrivateApis } from '@wordpress/editor';
@@ -32,7 +33,7 @@ import {
 import { previewField } from './fields/preview';
 // Unlock WordPress private APIs
 const { useEntityRecordsWithPermissions } = unlock( coreDataPrivateApis );
-const { usePostActions, usePostFields } = unlock( editorPrivateApis );
+const { usePostActions, useFields } = unlock( editorPrivateApis );
 const { Tabs } = unlock( componentsPrivateApis );
 /**
  * Style dependencies
@@ -167,8 +168,15 @@ function TemplatePartListView( {
 		postTypeQuery
 	);
 
-	const allFields = usePostFields( {
-		postType: TEMPLATE_PART_POST_TYPE,
+	// `usePostActions` below registers the post type's schema, which is what
+	// brings in the actions; the fields come straight from the server.
+	const {
+		fields: allFields,
+		isLoading: isLoadingFields,
+		error: fieldsError,
+	} = useFields( {
+		kind: 'postType',
+		name: TEMPLATE_PART_POST_TYPE,
 	} );
 
 	// Hide area column except in 'All' tab, hide status, and disable area filtering
@@ -322,13 +330,20 @@ function TemplatePartListView( {
 					</Tabs>
 				</div>
 			) }
+			{ fieldsError && (
+				<Notice.Root intent="error">
+					<Notice.Description>
+						{ fieldsError.message }
+					</Notice.Description>
+				</Notice.Root>
+			) }
 			<DataViews
 				data={ posts }
 				fields={ fields }
 				view={ view }
 				onChangeView={ onChangeView }
 				actions={ actions }
-				isLoading={ isResolving }
+				isLoading={ isResolving || isLoadingFields }
 				paginationInfo={ paginationInfo }
 				defaultLayouts={ defaultLayouts }
 				getItemId={ getItemId }

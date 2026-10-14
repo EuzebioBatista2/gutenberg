@@ -1,4 +1,5 @@
 import { Page } from '@wordpress/admin-ui';
+import { Notice } from '@wordpress/ui';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from '@wordpress/element';
 import { privateApis as blockEditorPrivateApis } from '@wordpress/block-editor';
@@ -23,7 +24,7 @@ import { previewField } from './fields';
 import usePatternCategories from '../sidebar-navigation-screen-patterns/use-pattern-categories';
 
 const { ExperimentalBlockEditorProvider } = unlock( blockEditorPrivateApis );
-const { usePostActions, usePostFields } = unlock( editorPrivateApis );
+const { usePostActions, useFields } = unlock( editorPrivateApis );
 const { useLocation, useHistory } = unlock( routerPrivateApis );
 
 const EMPTY_ARRAY = [];
@@ -96,9 +97,15 @@ export default function DataviewsPatterns() {
 		syncStatus: viewSyncStatus,
 	} );
 
-	const postTypeFields = usePostFields( { postType } );
+	// `usePostActions` below registers the post type's schema, which is what
+	// brings in the actions; the fields come straight from the server.
+	const {
+		fields: postTypeFields,
+		isLoading: isLoadingFields,
+		error: fieldsError,
+	} = useFields( { kind: 'postType', name: postType } );
 	const fields = useMemo( () => {
-		return [ previewField, ...( postTypeFields || [] ) ];
+		return [ previewField, ...postTypeFields ];
 	}, [ postTypeFields ] );
 
 	const { data, paginationInfo } = useMemo( () => {
@@ -153,6 +160,13 @@ export default function DataviewsPatterns() {
 					/>
 				}
 			>
+				{ fieldsError && (
+					<Notice.Root intent="error">
+						<Notice.Description>
+							{ fieldsError.message }
+						</Notice.Description>
+					</Notice.Root>
+				) }
 				<DataViews
 					key={ categoryId + postType }
 					paginationInfo={ paginationInfo }
@@ -160,7 +174,7 @@ export default function DataviewsPatterns() {
 					actions={ actions }
 					data={ dataWithPermissions || EMPTY_ARRAY }
 					getItemId={ ( item ) => item.name ?? item.id }
-					isLoading={ isResolving }
+					isLoading={ isResolving || isLoadingFields }
 					isItemClickable={ ( item ) =>
 						item.type !== PATTERN_TYPES.theme
 					}

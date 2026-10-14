@@ -1,8 +1,12 @@
 import { resolveSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
+import { privateApis as editorPrivateApis } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import { notFound } from '@wordpress/route';
+import { unlock } from '@wordpress/routes-lock-unlock';
 import { ensureView, viewToQuery } from './view-utils';
+
+const { loadFields } = unlock( editorPrivateApis );
 
 /**
  * Route configuration for template part list.
@@ -19,6 +23,15 @@ export const route = {
 		) {
 			throw notFound();
 		}
+	},
+	loader: async () => {
+		// Warm up the fields the stage renders. `useFields` there shares this
+		// resolution, so the screen paints with its fields on first render. A
+		// failure is the stage's to report, so it does not block the route.
+		await loadFields( {
+			kind: 'postType',
+			name: 'wp_template_part',
+		} ).catch( () => {} );
 	},
 	title: () => __( 'Template Parts' ),
 	async canvas( context: {
