@@ -1485,3 +1485,61 @@ test.describe( 'Synced pattern - read-only access', () => {
 		await context.close();
 	} );
 } );
+
+test.describe( 'Synced pattern - inserter categories', () => {
+	test.beforeAll( async ( { requestUtils } ) => {
+		await requestUtils.deleteAllBlocks();
+		const editorUser = await requestUtils.createUser( {
+			username: 'patterneditor',
+			email: 'patterneditor@example.com',
+			password: 'patterneditorpassword',
+			roles: [ 'editor' ],
+		} );
+		await requestUtils.createBlock( {
+			title: 'Editor pattern',
+			content:
+				'<!-- wp:paragraph -->\n<p>Editor pattern content</p>\n<!-- /wp:paragraph -->',
+			status: 'publish',
+			author: editorUser.id,
+		} );
+		await requestUtils.createBlock( {
+			title: 'Administrator pattern',
+			content:
+				'<!-- wp:paragraph -->\n<p>Administrator pattern content</p>\n<!-- /wp:paragraph -->',
+			status: 'publish',
+		} );
+	} );
+
+	test.afterAll( async ( { requestUtils } ) => {
+		await requestUtils.deleteAllPosts();
+		await requestUtils.deleteAllBlocks();
+		await requestUtils.deleteAllUsers();
+	} );
+
+	test( 'lists every pattern under "Site patterns" and only the current user\'s under "My patterns"', async ( {
+		admin,
+		page,
+	} ) => {
+		await admin.createNewPost();
+		await page
+			.getByRole( 'button', { name: 'Block Inserter', exact: true } )
+			.click();
+		await page.getByRole( 'tab', { name: 'Patterns' } ).click();
+
+		await page.getByRole( 'tab', { name: 'Site patterns' } ).click();
+		await expect(
+			page.getByRole( 'option', { name: 'Editor pattern' } )
+		).toBeVisible();
+		await expect(
+			page.getByRole( 'option', { name: 'Administrator pattern' } )
+		).toBeVisible();
+
+		await page.getByRole( 'tab', { name: 'My patterns' } ).click();
+		await expect(
+			page.getByRole( 'option', { name: 'Administrator pattern' } )
+		).toBeVisible();
+		await expect(
+			page.getByRole( 'option', { name: 'Editor pattern' } )
+		).toBeHidden();
+	} );
+} );

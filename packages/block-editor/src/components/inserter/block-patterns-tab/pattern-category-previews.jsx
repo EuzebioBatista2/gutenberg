@@ -21,9 +21,8 @@ import { usePatternCategories } from './use-pattern-categories';
 import {
 	isPatternFiltered,
 	allPatternsCategory,
-	myPatternsCategory,
 	starterPatternsCategory,
-	INSERTER_PATTERN_TYPES,
+	isUserPatternInCategory,
 } from './utils';
 
 const noop = () => {};
@@ -65,10 +64,7 @@ export function PatternCategoryPreviews( {
 					return true;
 				}
 
-				if (
-					category.name === myPatternsCategory.name &&
-					pattern.type === INSERTER_PATTERN_TYPES.user
-				) {
+				if ( isUserPatternInCategory( pattern, category.name ) ) {
 					return true;
 				}
 

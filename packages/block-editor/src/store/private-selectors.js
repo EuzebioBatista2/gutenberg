@@ -32,6 +32,7 @@ import { unlock } from '../lock-unlock';
 import {
 	selectBlockPatternsKey,
 	reusableBlocksSelectKey,
+	currentUserIdKey,
 	userPatternCategoriesSelectKey,
 	sectionRootClientIdKey,
 	isIsolatedEditorKey,
@@ -618,7 +619,8 @@ export const getPatternBySlug = createRegistrySelector( ( select ) =>
 					block,
 					state.settings[ userPatternCategoriesSelectKey ]?.(
 						select
-					) ?? state.settings.__experimentalUserPatternCategories
+					) ?? state.settings.__experimentalUserPatternCategories,
+					state.settings[ currentUserIdKey ]
 				);
 			}
 
@@ -634,6 +636,7 @@ export const getPatternBySlug = createRegistrySelector( ( select ) =>
 				? [
 						unlock( select( STORE_NAME ) ).getReusableBlocks(),
 						state.settings.__experimentalReusableBlocks,
+						state.settings[ currentUserIdKey ],
 					]
 				: [
 						state.settings.__experimentalBlockPatterns,
@@ -652,7 +655,8 @@ export const getAllPatterns = createRegistrySelector( ( select ) =>
 						userPattern,
 						state.settings[ userPatternCategoriesSelectKey ]?.(
 							select
-						) ?? state.settings.__experimentalUserPatternCategories
+						) ?? state.settings.__experimentalUserPatternCategories,
+						state.settings[ currentUserIdKey ]
 					)
 				),
 			// This setting is left for back compat.

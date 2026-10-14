@@ -5,10 +5,11 @@ import usePatternsState from '../hooks/use-patterns-state';
 import {
 	isPatternFiltered,
 	allPatternsCategory,
+	sitePatternsCategory,
 	myPatternsCategory,
 	starterPatternsCategory,
 	getPopulatedCategories,
-	INSERTER_PATTERN_TYPES,
+	isUserPatternInCategory,
 } from './utils';
 
 export function usePatternCategories( rootClientId, sourceFilter = 'all' ) {
@@ -41,12 +42,18 @@ export function usePatternCategories( rootClientId, sourceFilter = 'all' ) {
 		) {
 			categories.unshift( starterPatternsCategory );
 		}
-		if (
-			filteredPatterns.some(
-				( pattern ) => pattern.type === INSERTER_PATTERN_TYPES.user
-			)
-		) {
-			categories.unshift( myPatternsCategory );
+		// Unshifted in reverse, so "Site patterns" comes before "My patterns".
+		for ( const userPatternCategory of [
+			myPatternsCategory,
+			sitePatternsCategory,
+		] ) {
+			if (
+				filteredPatterns.some( ( pattern ) =>
+					isUserPatternInCategory( pattern, userPatternCategory.name )
+				)
+			) {
+				categories.unshift( userPatternCategory );
+			}
 		}
 		if ( filteredPatterns.length > 0 ) {
 			categories.unshift( {

@@ -10,10 +10,9 @@ import { searchItems } from '../../../utils/search-ranking';
 import BlockPatternsPaging from '../../block-patterns-paging';
 import usePatternsPaging from '../hooks/use-patterns-paging';
 import {
-	INSERTER_PATTERN_TYPES,
 	allPatternsCategory,
-	myPatternsCategory,
 	starterPatternsCategory,
+	isUserPatternInCategory,
 } from '../block-patterns-tab/utils';
 
 function PatternList( {
@@ -48,10 +47,7 @@ function PatternList( {
 			if ( selectedCategory === allPatternsCategory.name ) {
 				return true;
 			}
-			if (
-				selectedCategory === myPatternsCategory.name &&
-				pattern.type === INSERTER_PATTERN_TYPES.user
-			) {
+			if ( isUserPatternInCategory( pattern, selectedCategory ) ) {
 				return true;
 			}
 			if (

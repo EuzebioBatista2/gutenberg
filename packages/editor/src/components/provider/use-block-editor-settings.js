@@ -103,6 +103,7 @@ const {
 	globalStylesLinksDataKey,
 	selectBlockPatternsKey,
 	reusableBlocksSelectKey,
+	currentUserIdKey,
 	userPatternCategoriesSelectKey,
 	sectionRootClientIdKey,
 	mediaEditKey,
@@ -152,10 +153,12 @@ function useBlockEditorSettings( settings, postType, postId, renderingMode ) {
 		isRevisionsMode,
 		viewablePostTypeLabel,
 		currentPostId,
+		currentUserId,
 	} = useSelect(
 		( select ) => {
 			const {
 				canUser,
+				getCurrentUser,
 				getRawEntityRecord,
 				getEntityRecord,
 				getBlockPatternCategories,
@@ -246,6 +249,7 @@ function useBlockEditorSettings( settings, postType, postId, renderingMode ) {
 					? postTypeObject?.labels?.singular_name
 					: undefined,
 				currentPostId: getCurrentPostId(),
+				currentUserId: getCurrentUser()?.id,
 				restBlockPatternCategories: getBlockPatternCategories(),
 				sectionRootClientId: getSectionRootBlock(),
 				deviceType: getDeviceType(),
@@ -409,6 +413,7 @@ function useBlockEditorSettings( settings, postType, postId, renderingMode ) {
 					: undefined;
 			},
 			[ reusableBlocksSelectKey ]: __experimentalReusableBlocksSelect,
+			[ currentUserIdKey ]: currentUserId,
 			[ userPatternCategoriesSelectKey ]:
 				__experimentalUserPatternCategoriesSelect,
 			__experimentalBlockPatternCategories: blockPatternCategories,
@@ -493,6 +498,7 @@ function useBlockEditorSettings( settings, postType, postId, renderingMode ) {
 		imageStripMeta,
 		imageMaxBitDepth,
 		isNavigationOverlayContext,
+		currentUserId,
 	] );
 }
 

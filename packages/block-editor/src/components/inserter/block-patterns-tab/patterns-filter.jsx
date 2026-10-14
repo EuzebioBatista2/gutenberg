@@ -10,16 +10,13 @@ import { __, _x } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { useMemo, createInterpolateElement } from '@wordpress/element';
 import {
-	myPatternsCategory,
+	isUserPatternCategory,
 	INSERTER_SYNC_TYPES,
 	INSERTER_PATTERN_TYPES,
 } from './utils';
 
 const getShouldDisableSyncFilter = ( sourceFilter ) =>
 	sourceFilter !== 'all' && sourceFilter !== 'user';
-const getShouldHideSourcesFilter = ( category ) => {
-	return category.name === myPatternsCategory.name;
-};
 
 const PATTERN_SOURCE_MENU_OPTIONS = [
 	{
@@ -48,14 +45,13 @@ export function PatternsFilter( {
 	scrollContainerRef,
 	category,
 } ) {
-	// If the category is `myPatterns` then we need to set the source filter to `user`, but
-	// we do this by deriving from props rather than calling setPatternSourceFilter otherwise
-	// the user may be confused when switching to another category if the haven't explicitly set
-	// this filter themselves.
-	const currentPatternSourceFilter =
-		category.name === myPatternsCategory.name
-			? INSERTER_PATTERN_TYPES.user
-			: patternSourceFilter;
+	// If the category is `sitePatterns` or `myPatterns` then we need to set the source filter
+	// to `user`, but we do this by deriving from props rather than calling setPatternSourceFilter
+	// otherwise the user may be confused when switching to another category if the haven't
+	// explicitly set this filter themselves.
+	const currentPatternSourceFilter = isUserPatternCategory( category )
+		? INSERTER_PATTERN_TYPES.user
+		: patternSourceFilter;
 
 	// We need to disable the sync filter option if the source filter is not 'all' or 'user'
 	// otherwise applying them will just result in no patterns being shown.
@@ -63,9 +59,9 @@ export function PatternsFilter( {
 		currentPatternSourceFilter
 	);
 
-	// We also hide the directory and theme source filter if the category is `myPatterns`
-	// otherwise there will only be one option available.
-	const shouldHideSourcesFilter = getShouldHideSourcesFilter( category );
+	// We also hide the directory and theme source filter if the category is `sitePatterns` or
+	// `myPatterns` otherwise there will only be one option available.
+	const shouldHideSourcesFilter = isUserPatternCategory( category );
 
 	const patternSyncMenuOptions = useMemo(
 		() => [

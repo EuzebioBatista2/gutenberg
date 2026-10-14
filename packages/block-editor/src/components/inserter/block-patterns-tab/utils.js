@@ -16,6 +16,11 @@ export const allPatternsCategory = {
 	label: _x( 'All', 'patterns' ),
 };
 
+export const sitePatternsCategory = {
+	name: 'sitePatterns',
+	label: __( 'Site patterns' ),
+};
+
 export const myPatternsCategory = {
 	name: 'myPatterns',
 	label: __( 'My patterns' ),
@@ -25,6 +30,42 @@ export const starterPatternsCategory = {
 	name: 'core/starter-content',
 	label: __( 'Starter content' ),
 };
+
+/**
+ * Whether a pattern belongs to one of the user pattern categories. "Site
+ * patterns" lists every pattern created on the site, "My patterns" only the
+ * ones the current user created.
+ *
+ * @param {Object} pattern      The pattern to check.
+ * @param {string} categoryName The name of the category.
+ *
+ * @return {boolean} Whether the pattern belongs to the category.
+ */
+export function isUserPatternInCategory( pattern, categoryName ) {
+	if ( pattern.type !== INSERTER_PATTERN_TYPES.user ) {
+		return false;
+	}
+	if ( categoryName === sitePatternsCategory.name ) {
+		return true;
+	}
+	return (
+		categoryName === myPatternsCategory.name &&
+		!! pattern.isCurrentUserPattern
+	);
+}
+
+/**
+ * Whether the category is one of the user pattern categories.
+ *
+ * @param {Object} category The category to check.
+ *
+ * @return {boolean} Whether it is "Site patterns" or "My patterns".
+ */
+export function isUserPatternCategory( category ) {
+	return [ sitePatternsCategory.name, myPatternsCategory.name ].includes(
+		category?.name
+	);
+}
 
 function hasRegisteredCategory( pattern, allCategories ) {
 	if ( ! pattern.categories || ! pattern.categories.length ) {

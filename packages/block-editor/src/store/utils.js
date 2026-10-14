@@ -3,6 +3,7 @@ import { parse as grammarParse } from '@wordpress/block-serialization-default-pa
 import {
 	selectBlockPatternsKey,
 	userPatternCategoriesSelectKey,
+	currentUserIdKey,
 } from './private-keys';
 import { unlock } from '../lock-unlock';
 import { STORE_NAME } from './constants';
@@ -18,9 +19,19 @@ export const isFiltered = Symbol( 'isFiltered' );
 const parsedPatternCache = new WeakMap();
 const grammarMapCache = new WeakMap();
 
+/**
+ * Maps a `wp_block` record to the pattern shape the inserter uses.
+ *
+ * @param {Object} userPattern                         The `wp_block` record.
+ * @param {Array}  __experimentalUserPatternCategories The user pattern categories.
+ * @param {number} currentUserId                       The ID of the current user, if known.
+ *
+ * @return {Object} The pattern.
+ */
 export function mapUserPattern(
 	userPattern,
-	__experimentalUserPatternCategories = []
+	__experimentalUserPatternCategories = [],
+	currentUserId
 ) {
 	return {
 		name: `core/block/${ userPattern.id }`,
@@ -35,6 +46,8 @@ export function mapUserPattern(
 		} ),
 		content: userPattern.content?.raw,
 		syncStatus: userPattern.wp_pattern_sync_status,
+		isCurrentUserPattern:
+			!! currentUserId && userPattern.author === currentUserId,
 	};
 }
 
@@ -128,6 +141,7 @@ export const getAllPatternsDependants = ( select ) => ( state ) => {
 			state.settings.__experimentalUserPatternCategories,
 		state.settings.__experimentalReusableBlocks,
 		state.settings[ selectBlockPatternsKey ]?.( select ),
+		state.settings[ currentUserIdKey ],
 		state.blockPatterns,
 		unlock( select( STORE_NAME ) ).getReusableBlocks(),
 	];
