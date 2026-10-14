@@ -43,6 +43,10 @@ function __experimentalUserPatternCategoriesSelect( select ) {
 	return select( coreStore ).getUserPatternCategories();
 }
 
+function currentUserIdSelect( select ) {
+	return select( coreStore ).getCurrentUser()?.id;
+}
+
 const BLOCK_EDITOR_SETTINGS = [
 	'__experimentalBlockBindingsSupportedAttributes',
 	'__experimentalBlockDirectory',
@@ -103,7 +107,7 @@ const {
 	globalStylesLinksDataKey,
 	selectBlockPatternsKey,
 	reusableBlocksSelectKey,
-	currentUserIdKey,
+	currentUserIdSelectKey,
 	userPatternCategoriesSelectKey,
 	sectionRootClientIdKey,
 	mediaEditKey,
@@ -153,12 +157,10 @@ function useBlockEditorSettings( settings, postType, postId, renderingMode ) {
 		isRevisionsMode,
 		viewablePostTypeLabel,
 		currentPostId,
-		currentUserId,
 	} = useSelect(
 		( select ) => {
 			const {
 				canUser,
-				getCurrentUser,
 				getRawEntityRecord,
 				getEntityRecord,
 				getBlockPatternCategories,
@@ -249,7 +251,6 @@ function useBlockEditorSettings( settings, postType, postId, renderingMode ) {
 					? postTypeObject?.labels?.singular_name
 					: undefined,
 				currentPostId: getCurrentPostId(),
-				currentUserId: getCurrentUser()?.id,
 				restBlockPatternCategories: getBlockPatternCategories(),
 				sectionRootClientId: getSectionRootBlock(),
 				deviceType: getDeviceType(),
@@ -413,7 +414,7 @@ function useBlockEditorSettings( settings, postType, postId, renderingMode ) {
 					: undefined;
 			},
 			[ reusableBlocksSelectKey ]: __experimentalReusableBlocksSelect,
-			[ currentUserIdKey ]: currentUserId,
+			[ currentUserIdSelectKey ]: currentUserIdSelect,
 			[ userPatternCategoriesSelectKey ]:
 				__experimentalUserPatternCategoriesSelect,
 			__experimentalBlockPatternCategories: blockPatternCategories,
@@ -498,7 +499,6 @@ function useBlockEditorSettings( settings, postType, postId, renderingMode ) {
 		imageStripMeta,
 		imageMaxBitDepth,
 		isNavigationOverlayContext,
-		currentUserId,
 	] );
 }
 

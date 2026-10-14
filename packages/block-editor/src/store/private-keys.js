@@ -2,7 +2,7 @@ export const globalStylesDataKey = Symbol( 'globalStylesDataKey' );
 export const globalStylesLinksDataKey = Symbol( 'globalStylesLinks' );
 export const selectBlockPatternsKey = Symbol( 'selectBlockPatternsKey' );
 export const reusableBlocksSelectKey = Symbol( 'reusableBlocksSelect' );
-export const currentUserIdKey = Symbol( 'currentUserId' );
+export const currentUserIdSelectKey = Symbol( 'currentUserIdSelect' );
 export const userPatternCategoriesSelectKey = Symbol(
 	'userPatternCategoriesSelect'
 );

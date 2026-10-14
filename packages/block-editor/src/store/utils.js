@@ -3,7 +3,7 @@ import { parse as grammarParse } from '@wordpress/block-serialization-default-pa
 import {
 	selectBlockPatternsKey,
 	userPatternCategoriesSelectKey,
-	currentUserIdKey,
+	currentUserIdSelectKey,
 } from './private-keys';
 import { unlock } from '../lock-unlock';
 import { STORE_NAME } from './constants';
@@ -141,7 +141,7 @@ export const getAllPatternsDependants = ( select ) => ( state ) => {
 			state.settings.__experimentalUserPatternCategories,
 		state.settings.__experimentalReusableBlocks,
 		state.settings[ selectBlockPatternsKey ]?.( select ),
-		state.settings[ currentUserIdKey ],
+		state.settings[ currentUserIdSelectKey ]?.( select ),
 		state.blockPatterns,
 		unlock( select( STORE_NAME ) ).getReusableBlocks(),
 	];
