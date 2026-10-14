@@ -9,7 +9,11 @@ import {
 	synchronizeBlocksWithTemplate,
 	__unstableSerializeAndClean,
 } from '@wordpress/blocks';
-import { store as noticesStore } from '@wordpress/notices';
+import {
+	store as noticesStore,
+	privateApis as noticesPrivateApis,
+} from '@wordpress/notices';
+import { createElement } from '@wordpress/element';
 import {
 	store as coreStore,
 	privateApis as coreDataPrivateApis,
@@ -32,6 +36,7 @@ import attachMediaInPost from './utils/attach-media-in-post';
 import { unlock } from '../lock-unlock';
 import { setCanvasWidth } from './private-actions';
 import { getCanvasWidthByDeviceType } from '../utils/device-type';
+import AutosaveFailureNotice from '../components/autosave-failure-notice';
 
 const { getEntitySnapshot } = unlock( coreDataPrivateApis );
 
@@ -321,11 +326,13 @@ export const savePost =
 			} );
 			if ( args.length ) {
 				const [ noticeMessage ] = args;
-				if (
+				const details =
 					error.message &&
 					! CLIENT_GENERATED_ERROR_CODES.includes( error.code ) &&
 					! /<\/?[^>]*>/.test( error.message )
-				) {
+						? error.message
+						: null;
+				if ( details ) {
 					args[ 0 ] = `${ escapeHTML(
 						noticeMessage
 					) } <details class="editor-save-error-details"><summary>${ escapeHTML(
@@ -342,6 +349,20 @@ export const savePost =
 					// when rendering raw HTML content, so announce the plain text
 					// manually to avoid reading the markup aloud.
 					speak( noticeMessage, 'assertive' );
+				}
+
+				if ( options.isAutosave ) {
+					const { NOTICE_ELEMENT } = unlock( noticesPrivateApis );
+					args[ 1 ] = {
+						...args[ 1 ],
+						[ NOTICE_ELEMENT ]: createElement(
+							AutosaveFailureNotice,
+							{
+								message: noticeMessage,
+								details,
+							}
+						),
+					};
 				}
 
 				registry.dispatch( noticesStore ).createErrorNotice( ...args );

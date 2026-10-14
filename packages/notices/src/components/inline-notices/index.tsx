@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { NoticeList } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { store as noticesStore } from '../../store';
+import { withNoticeElements } from '../../store/notice-element';
 
 type InlineNoticesProps = {
 	children?: ReactNode;
@@ -32,11 +33,12 @@ export default function InlineNotices( {
 		( select ) => select( noticesStore ).getNotices( context ),
 		[ context ]
 	);
+	const renderedNotices = withNoticeElements( notices );
 	const { removeNotice } = useDispatch( noticesStore );
-	const dismissibleNotices = notices.filter(
+	const dismissibleNotices = renderedNotices.filter(
 		( { isDismissible, type } ) => isDismissible && type === 'default'
 	);
-	const nonDismissibleNotices = notices.filter(
+	const nonDismissibleNotices = renderedNotices.filter(
 		( { isDismissible, type } ) => ! isDismissible && type === 'default'
 	);
 
