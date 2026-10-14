@@ -6,6 +6,10 @@
 
 -   Raise the minimum required Node.js version to `>=22.13.0`, for stable `require(esm)` support ([#84313](https://github.com/WordPress/gutenberg/pull/84313)).
 
+### Internal
+
+-   Add the private `getEntityActionsConfig( kind, name )` selector, which fetches the actions registered on the server for an entity from the `/wp/v2/entity-actions` route ([#84660](https://github.com/WordPress/gutenberg/pull/84660)).
+
 ## 8.2.0 (2026-10-07)
 
 ### Enhancements

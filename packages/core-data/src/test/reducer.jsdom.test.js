@@ -8,6 +8,7 @@ import {
 	currentUser,
 	undoManagerReference,
 	undoManager,
+	entityActionsConfigs,
 } from '../reducer';
 
 describe( 'entities', () => {
@@ -553,5 +554,50 @@ describe( 'undoManagerReference', () => {
 				type: 'RECORD_SYNC_UNDO_LEVEL',
 			} )
 		).not.toBe( originalState );
+	} );
+} );
+
+describe( 'entityActionsConfigs', () => {
+	it( 'returns an empty object by default', () => {
+		expect( entityActionsConfigs( undefined, {} ) ).toEqual( {} );
+	} );
+
+	it( 'keys the received configs by kind, then name', () => {
+		const pageConfig = { kind: 'postType', name: 'page', actions: [] };
+		const postConfig = { kind: 'postType', name: 'post', actions: [] };
+		const state = deepFreeze( {
+			postType: { page: pageConfig },
+		} );
+
+		expect(
+			entityActionsConfigs( state, {
+				type: 'RECEIVE_ENTITY_ACTIONS_CONFIG',
+				kind: 'postType',
+				name: 'post',
+				config: postConfig,
+			} )
+		).toEqual( {
+			postType: { page: pageConfig, post: postConfig },
+		} );
+	} );
+
+	it( 'keeps entities whose kind and name join into the same string apart', () => {
+		const state = entityActionsConfigs(
+			entityActionsConfigs( undefined, {
+				type: 'RECEIVE_ENTITY_ACTIONS_CONFIG',
+				kind: 'a/b',
+				name: 'c',
+				config: { actions: [ { id: 'first' } ] },
+			} ),
+			{
+				type: 'RECEIVE_ENTITY_ACTIONS_CONFIG',
+				kind: 'a',
+				name: 'b/c',
+				config: { actions: [ { id: 'second' } ] },
+			}
+		);
+
+		expect( state[ 'a/b' ].c.actions ).toEqual( [ { id: 'first' } ] );
+		expect( state.a[ 'b/c' ].actions ).toEqual( [ { id: 'second' } ] );
 	} );
 } );
