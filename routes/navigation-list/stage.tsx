@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { useView, useViewConfig } from '@wordpress/views';
 import { DataViews } from '@wordpress/dataviews';
 import { Button } from '@wordpress/components';
+import { Notice } from '@wordpress/ui';
 import { privateApis as editorPrivateApis } from '@wordpress/editor';
 import { unlock } from '@wordpress/routes-lock-unlock';
 import { getActiveViewOverrides, type ViewOverrides } from './view-utils';
@@ -17,7 +18,7 @@ import './style.scss';
 
 // Unlock WordPress private APIs
 const { useEntityRecordsWithPermissions } = unlock( coreDataPrivateApis );
-const { usePostActions, usePostFields } = unlock( editorPrivateApis );
+const { usePostActions, useFields } = unlock( editorPrivateApis );
 
 const NAVIGATION_POST_TYPE = 'wp_navigation';
 
@@ -113,8 +114,15 @@ function NavigationListView( {
 		PRELOADED_NAVIGATION_MENUS_QUERY
 	);
 
-	const fields = usePostFields( {
-		postType: NAVIGATION_POST_TYPE,
+	// `usePostActions` below registers the post type's schema, which is what
+	// brings in the actions; the fields come straight from the server.
+	const {
+		fields,
+		isLoading: isLoadingFields,
+		error: fieldsError,
+	} = useFields( {
+		kind: 'postType',
+		name: NAVIGATION_POST_TYPE,
 	} );
 	const [ showAddModal, setShowAddModal ] = useState( false );
 
@@ -174,12 +182,19 @@ function NavigationListView( {
 					</Button>
 				}
 			>
+				{ fieldsError && (
+					<Notice.Root intent="error">
+						<Notice.Description>
+							{ fieldsError.message }
+						</Notice.Description>
+					</Notice.Root>
+				) }
 				<DataViews
 					data={ navigationMenus }
 					fields={ fields }
 					view={ view }
 					onChangeView={ updateView }
-					isLoading={ isResolving || ! fields }
+					isLoading={ isResolving || isLoadingFields }
 					actions={ actions }
 					paginationInfo={ {
 						totalItems,
