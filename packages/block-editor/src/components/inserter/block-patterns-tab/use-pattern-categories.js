@@ -6,7 +6,6 @@ import {
 	isPatternFiltered,
 	allPatternsCategory,
 	sitePatternsCategory,
-	myPatternsCategory,
 	starterPatternsCategory,
 	getPopulatedCategories,
 	isUserPatternInCategory,
@@ -42,18 +41,12 @@ export function usePatternCategories( rootClientId, sourceFilter = 'all' ) {
 		) {
 			categories.unshift( starterPatternsCategory );
 		}
-		// Unshifted in reverse, so "Site patterns" comes before "My patterns".
-		for ( const userPatternCategory of [
-			myPatternsCategory,
-			sitePatternsCategory,
-		] ) {
-			if (
-				filteredPatterns.some( ( pattern ) =>
-					isUserPatternInCategory( pattern, userPatternCategory.name )
-				)
-			) {
-				categories.unshift( userPatternCategory );
-			}
+		if (
+			filteredPatterns.some( ( pattern ) =>
+				isUserPatternInCategory( pattern, sitePatternsCategory.name )
+			)
+		) {
+			categories.unshift( sitePatternsCategory );
 		}
 		if ( filteredPatterns.length > 0 ) {
 			categories.unshift( {

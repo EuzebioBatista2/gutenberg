@@ -21,20 +21,19 @@ export const sitePatternsCategory = {
 	label: __( 'Site patterns' ),
 };
 
-export const myPatternsCategory = {
-	name: 'myPatterns',
-	label: __( 'My patterns' ),
-};
-
 export const starterPatternsCategory = {
 	name: 'core/starter-content',
 	label: __( 'Starter content' ),
 };
 
+export const INSERTER_AUTHOR_FILTERS = {
+	all: 'all',
+	mine: 'mine',
+};
+
 /**
- * Whether a pattern belongs to one of the user pattern categories. "Site
- * patterns" lists every pattern created on the site, "My patterns" only the
- * ones the current user created.
+ * Whether a pattern belongs to the "Site patterns" category, which lists every
+ * pattern created on the site.
  *
  * @param {Object} pattern      The pattern to check.
  * @param {string} categoryName The name of the category.
@@ -42,28 +41,36 @@ export const starterPatternsCategory = {
  * @return {boolean} Whether the pattern belongs to the category.
  */
 export function isUserPatternInCategory( pattern, categoryName ) {
-	if ( pattern.type !== INSERTER_PATTERN_TYPES.user ) {
-		return false;
-	}
-	if ( categoryName === sitePatternsCategory.name ) {
-		return true;
-	}
 	return (
-		categoryName === myPatternsCategory.name &&
-		!! pattern.isCurrentUserPattern
+		categoryName === sitePatternsCategory.name &&
+		pattern.type === INSERTER_PATTERN_TYPES.user
 	);
 }
 
 /**
- * Whether the category is one of the user pattern categories.
+ * Whether the category is the "Site patterns" category.
  *
  * @param {Object} category The category to check.
  *
- * @return {boolean} Whether it is "Site patterns" or "My patterns".
+ * @return {boolean} Whether it is "Site patterns".
  */
 export function isUserPatternCategory( category ) {
-	return [ sitePatternsCategory.name, myPatternsCategory.name ].includes(
-		category?.name
+	return category?.name === sitePatternsCategory.name;
+}
+
+/**
+ * Whether a pattern is hidden by the author filter. "Mine" keeps only the
+ * patterns the current user created.
+ *
+ * @param {Object} pattern      The pattern to check.
+ * @param {string} authorFilter The author filter.
+ *
+ * @return {boolean} Whether the pattern is filtered out.
+ */
+export function isPatternFilteredByAuthor( pattern, authorFilter ) {
+	return (
+		authorFilter === INSERTER_AUTHOR_FILTERS.mine &&
+		! pattern.isCurrentUserPattern
 	);
 }
 

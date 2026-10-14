@@ -23,6 +23,10 @@ import {
 	allPatternsCategory,
 	starterPatternsCategory,
 	isUserPatternInCategory,
+	isUserPatternCategory,
+	isPatternFilteredByAuthor,
+	INSERTER_AUTHOR_FILTERS,
+	INSERTER_PATTERN_TYPES,
 } from './utils';
 
 const noop = () => {};
@@ -41,11 +45,21 @@ export function PatternCategoryPreviews( {
 	);
 	const [ patternSyncFilter, setPatternSyncFilter ] = useState( 'all' );
 	const [ patternSourceFilter, setPatternSourceFilter ] = useState( 'all' );
+	const [ patternAuthorFilter, setPatternAuthorFilter ] = useState(
+		INSERTER_AUTHOR_FILTERS.all
+	);
 
 	const availableCategories = usePatternCategories(
 		rootClientId,
 		patternSourceFilter
 	);
+	// The author filter only applies while the list is limited to patterns
+	// created on the site, the same condition under which the filter is shown.
+	const currentPatternAuthorFilter =
+		isUserPatternCategory( category ) ||
+		patternSourceFilter === INSERTER_PATTERN_TYPES.user
+			? patternAuthorFilter
+			: INSERTER_AUTHOR_FILTERS.all;
 	const scrollContainerRef = useRef();
 	const currentCategoryPatterns = useMemo(
 		() =>
@@ -55,6 +69,10 @@ export function PatternCategoryPreviews( {
 						pattern,
 						patternSourceFilter,
 						patternSyncFilter
+					) ||
+					isPatternFilteredByAuthor(
+						pattern,
+						currentPatternAuthorFilter
 					)
 				) {
 					return false;
@@ -95,6 +113,7 @@ export function PatternCategoryPreviews( {
 			category.name,
 			patternSourceFilter,
 			patternSyncFilter,
+			currentPatternAuthorFilter,
 		]
 	);
 
@@ -122,6 +141,13 @@ export function PatternCategoryPreviews( {
 		},
 		[ setPatternSourceFilter, changePage ]
 	);
+	const onSetPatternAuthorFilter = useCallback(
+		( value ) => {
+			setPatternAuthorFilter( value );
+			changePage( 1 );
+		},
+		[ setPatternAuthorFilter, changePage ]
+	);
 
 	return (
 		<>
@@ -145,6 +171,8 @@ export function PatternCategoryPreviews( {
 						patternSourceFilter={ patternSourceFilter }
 						setPatternSyncFilter={ onSetPatternSyncFilter }
 						setPatternSourceFilter={ onSetPatternSourceFilter }
+						patternAuthorFilter={ patternAuthorFilter }
+						setPatternAuthorFilter={ onSetPatternAuthorFilter }
 						scrollContainerRef={ scrollContainerRef }
 						category={ category }
 					/>

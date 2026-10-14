@@ -13,10 +13,22 @@ import {
 	isUserPatternCategory,
 	INSERTER_SYNC_TYPES,
 	INSERTER_PATTERN_TYPES,
+	INSERTER_AUTHOR_FILTERS,
 } from './utils';
 
 const getShouldDisableSyncFilter = ( sourceFilter ) =>
 	sourceFilter !== 'all' && sourceFilter !== 'user';
+
+const PATTERN_AUTHOR_MENU_OPTIONS = [
+	{
+		value: INSERTER_AUTHOR_FILTERS.all,
+		label: _x( 'All', 'patterns' ),
+	},
+	{
+		value: INSERTER_AUTHOR_FILTERS.mine,
+		label: __( 'My patterns' ),
+	},
+];
 
 const PATTERN_SOURCE_MENU_OPTIONS = [
 	{
@@ -42,13 +54,15 @@ export function PatternsFilter( {
 	setPatternSourceFilter,
 	patternSyncFilter,
 	patternSourceFilter,
+	setPatternAuthorFilter,
+	patternAuthorFilter,
 	scrollContainerRef,
 	category,
 } ) {
-	// If the category is `sitePatterns` or `myPatterns` then we need to set the source filter
-	// to `user`, but we do this by deriving from props rather than calling setPatternSourceFilter
-	// otherwise the user may be confused when switching to another category if the haven't
-	// explicitly set this filter themselves.
+	// If the category is `sitePatterns` then we need to set the source filter to `user`, but
+	// we do this by deriving from props rather than calling setPatternSourceFilter otherwise
+	// the user may be confused when switching to another category if the haven't explicitly set
+	// this filter themselves.
 	const currentPatternSourceFilter = isUserPatternCategory( category )
 		? INSERTER_PATTERN_TYPES.user
 		: patternSourceFilter;
@@ -59,9 +73,14 @@ export function PatternsFilter( {
 		currentPatternSourceFilter
 	);
 
-	// We also hide the directory and theme source filter if the category is `sitePatterns` or
-	// `myPatterns` otherwise there will only be one option available.
+	// We also hide the directory and theme source filter if the category is `sitePatterns`
+	// otherwise there will only be one option available.
 	const shouldHideSourcesFilter = isUserPatternCategory( category );
+
+	// The author filter only applies to patterns created on the site.
+	const shouldShowAuthorFilter =
+		!! setPatternAuthorFilter &&
+		currentPatternSourceFilter === INSERTER_PATTERN_TYPES.user;
 
 	const patternSyncMenuOptions = useMemo(
 		() => [
@@ -87,6 +106,9 @@ export function PatternsFilter( {
 		setPatternSourceFilter( newSourceFilter );
 		if ( getShouldDisableSyncFilter( newSourceFilter ) ) {
 			setPatternSyncFilter( 'all' );
+		}
+		if ( newSourceFilter !== INSERTER_PATTERN_TYPES.user ) {
+			setPatternAuthorFilter?.( INSERTER_AUTHOR_FILTERS.all );
 		}
 	}
 
@@ -131,6 +153,21 @@ export function PatternsFilter( {
 										);
 									} }
 									value={ currentPatternSourceFilter }
+								/>
+							</MenuGroup>
+						) }
+						{ shouldShowAuthorFilter && (
+							<MenuGroup label={ __( 'Author' ) }>
+								<MenuItemsChoice
+									choices={ PATTERN_AUTHOR_MENU_OPTIONS }
+									onSelect={ ( value ) => {
+										setPatternAuthorFilter( value );
+										scrollContainerRef.current?.scrollTo(
+											0,
+											0
+										);
+									} }
+									value={ patternAuthorFilter }
 								/>
 							</MenuGroup>
 						) }
